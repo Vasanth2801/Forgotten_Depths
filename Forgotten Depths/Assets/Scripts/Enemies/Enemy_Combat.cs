@@ -5,12 +5,20 @@ using UnityEngine;
 public class Enemy_Combat : MonoBehaviour
 {
     [SerializeField] private int damage = 1;
+    [SerializeField] private Transform attackPoint;
+    [SerializeField] private float weaponRange;
+    [SerializeField] private LayerMask playerLayer;
+    [SerializeField] private float knockbackForce;
+    [SerializeField] private float stunTime;
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    public void Attack()
     {
-        if (collision.gameObject.tag == "Player")
+        Collider2D[] hits = Physics2D.OverlapCircleAll(attackPoint.position, weaponRange, playerLayer);
+
+        if(hits.Length > 0)
         {
-            collision.gameObject.GetComponent<PlayerHealth>().TakeDamage(-damage);
+            hits[0].GetComponent<PlayerHealth>().TakeDamage(-damage);
+            hits[0].GetComponent<Player>().Knockback(transform,knockbackForce, stunTime); 
         }
     }
 }
